@@ -803,9 +803,9 @@ class DeepseekOCRForCausalLM(DeepseekV2ForCausalLM):
 
 
                 
-                images_list.append(image_transform(global_view).to(torch.bfloat16))
+                images_list.append(image_transform(global_view).to(torch.float16))
 
-                # global_view_tensor = image_transform(global_view).to(torch.bfloat16)
+                # global_view_tensor = image_transform(global_view).to(torch.float16)
 
                 width_crop_num, height_crop_num = crop_ratio
 
@@ -816,7 +816,7 @@ class DeepseekOCRForCausalLM(DeepseekV2ForCausalLM):
                     """process the local views"""
                     
                     for i in range(len(images_crop_raw)):
-                        images_crop_list.append(image_transform(images_crop_raw[i]).to(torch.bfloat16))
+                        images_crop_list.append(image_transform(images_crop_raw[i]).to(torch.float16))
                 
                 if image_size == 640:
                     valid_img_tokens += len(images_crop_list) * 100
@@ -850,7 +850,7 @@ class DeepseekOCRForCausalLM(DeepseekV2ForCausalLM):
                 # else:
                 global_view = ImageOps.pad(image, (image_size, image_size),
                                         color=tuple(int(x * 255) for x in image_transform.mean))
-                images_list.append(image_transform(global_view).to(torch.bfloat16))
+                images_list.append(image_transform(global_view).to(torch.float16))
 
                 if base_size == 1024:
                     valid_img_tokens += int(256 * ratio)
@@ -915,7 +915,7 @@ class DeepseekOCRForCausalLM(DeepseekV2ForCausalLM):
 
         if not eval_mode:
             streamer = NoEOSTextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=False)
-            with torch.autocast("cuda", dtype=torch.bfloat16):
+            with torch.autocast("cuda", dtype=torch.float16):
                 with torch.no_grad():
                     output_ids = self.generate(
                         input_ids.unsqueeze(0).cuda(),
@@ -933,7 +933,7 @@ class DeepseekOCRForCausalLM(DeepseekV2ForCausalLM):
                         )
 
         else:
-            with torch.autocast("cuda", dtype=torch.bfloat16):
+            with torch.autocast("cuda", dtype=torch.float16):
                 with torch.no_grad():
                     output_ids = self.generate(
                         input_ids.unsqueeze(0).cuda(),
