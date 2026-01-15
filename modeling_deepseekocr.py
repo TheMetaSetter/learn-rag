@@ -505,7 +505,15 @@ class DeepseekOCRModel(DeepseekV2Model):
                     # exit()
 
                     mask = images_seq_mask[idx].unsqueeze(-1).to(device=inputs_embeds.device).bool()
+
+                    # Debug
+                    print("Type of inputs_embeds is", inputs_embeds.dtype)
+
                     source = images_in_this_batch.to(device=inputs_embeds.device, dtype=inputs_embeds.dtype)
+
+                    # Debug
+                    print("The type of source is", source.dtype)
+
                     inputs_embeds[idx].masked_scatter_(mask, source)
 
                 idx += 1
